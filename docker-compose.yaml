@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  ui:
+    build: ./ui
+    container_name: user_ui
+    depends_on:
+      - fms
+    environment:
+      - DISPLAY=${DISPLAY}
+      - FMS_WS_URL=ws://fms:8081/ws/updates
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix # for tkinter display
+
+  fms:
+    build: ./fms
+    container_name: fms_api
+
+  robot:
+    build: ./robot
+    container_name: robot_node
+    depends_on:
+      - fms
+    privileged: true
+    environment:
+      - DISPLAY=${DISPLAY}
+      - FMS_WS_URL=ws://fms:8081/ws/updates
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix # for tkinter display
